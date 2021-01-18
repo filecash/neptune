@@ -611,6 +611,33 @@ where
     Ok((frs.to_vec(), state))
 }
 
+fn mbatch_hash5s<A>(
+    ctx: &mut FutharkContext,
+    state: &mut S5State,
+    preimages: &[GenericArray<Fr, A>],
+) -> Result<(Vec<Fr>, S5State), Error>
+where
+    A: Arity<Fr>,
+{
+    assert_eq!(5, A::to_usize());
+    let flat_preimages = as_mont_u64s(preimages);
+    let input = Array_u64_1d::from_vec(*ctx, &flat_preimages, &[flat_preimages.len() as i64, 1])
+        .map_err(|_| Error::Other("could not convert".to_string()))?;
+
+    let (res, state) = ctx
+        .mbatch_hash5s(state, input)
+        .map_err(|e| Error::GPUError(format!("{:?}", e)))?;
+
+    //let (vec, _shape) = res.to_vec();
+    let (vec, _shape) = match res.to_vec(){
+        Ok(r) => r,
+        _ => panic!("mbatch_hash5s failed!"),
+    };
+    let frs = unpack_fr_array_from_monts(vec.as_slice())?;
+
+    Ok((frs.to_vec(), state))
+}
+
 fn mbatch_hash8s<A>(
     ctx: &mut FutharkContext,
     state: &S8State,
