@@ -11,7 +11,7 @@ use rust_gpu_tools::opencl::{cl_device_id, Device, GPUSelector};
 use rust_gpu_tools::{call_kernel, opencl};
 use std::collections::HashMap;
 use std::marker::PhantomData;
-use typenum::{U11, U2, U8};
+use typenum::{U11, U2, U5, U8};
 
 #[derive(Debug)]
 struct GPUConstants<A>(PoseidonConstants<Bls12, A>)
